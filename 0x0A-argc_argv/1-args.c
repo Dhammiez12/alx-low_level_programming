@@ -10,6 +10,6 @@
 int main(int argc, char *argv[])
 {
 	argv = argv;
-	printf("Number of arguments is" + "%d\n", argc - 1);
+	printf("%d\n", argc - 1);
 	return (0);
 }
