@@ -9,19 +9,16 @@
  */
 
 size_t print_listint(const listint_t *h)
+size_t print_listint(const listint_t *h)
 {
-	size_t node_Count;
-	const listint_t *next_ptr;
+	size_t num = 0;
 
-	next_ptr = h;
-	node_Count = 0;
-
-	while (next_ptr != NULL)
+	while (h)
 	{
-		printf("%i\n", next_ptr->n);
-		node_Count += 1;
-		next_ptr = next_ptr->next;
+		printf("%d\n", h->n);
+		num++;
+		h = h->next;
 	}
 
-	return (node_Count);
+	return (num);
 }

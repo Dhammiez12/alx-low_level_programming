@@ -7,36 +7,37 @@
  * at index of a listint_t linked list
  * @head: First node
  * @index: node
- * Return: head
+ * Return: 1 or -1 or NULL
  */
 
 int delete_nodeint_at_index(listint_t **head, unsigned int index)
 {
-	listint_t *previous_ptr;
-	listint_t *next_ptr;
-	unsigned int i;
+	listint_t *temp = *head;
+	listint_t *current = NULL;
+	unsigned int i = 0;
 
-	if (head == NULL || *head == NULL)
+	if (*head == NULL)
 		return (-1);
 
-	next_ptr = *head;
-	previous_ptr = NULL;
 	if (index == 0)
 	{
 		*head = (*head)->next;
-		free(next_ptr);
+		free(temp);
 		return (1);
 	}
-	for (i = 0; i < index; i += 1)
+
+	while (i < index - 1)
 	{
-		if (next_ptr == NULL)
+		if (!temp || !(temp->next))
 			return (-1);
-		previous_ptr = next_ptr;
-		next_ptr = next_ptr->next;
+		temp = temp->next;
+		i++;
 	}
-	if (previous_ptr)
-		previous_ptr->next = next_ptr->next;
-	free(next_ptr);
+
+
+	current = temp->next;
+	temp->next = current->next;
+	free(current);
 
 	return (1);
 }
