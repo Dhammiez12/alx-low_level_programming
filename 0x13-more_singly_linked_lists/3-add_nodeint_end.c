@@ -2,30 +2,34 @@
 #include <stdlib.h>
 
 /**
- * add_nodeint_end - A function that adds a new node
- * at the end of a listint_t list
- * @head: FIRST NODE
- * @n: int
- * Return: current position
+ * add_nodeint_end - A function that adds a
+ * new node at the end of a listint_t list
+ * @head: current place
+ * @n: int to add to
+ * Return: pointer current position
  */
 
 listint_t *add_nodeint_end(listint_t **head, const int n)
 {
-	listint_t *new, *current;
+	listint_t *next_ptr;
+	listint_t *new_node;
 
-	new = malloc(sizeof(listint_t));
-	if (new == NULL)
+	new_node = malloc(sizeof(listint_t));
+	if (!new_node)
 		return (NULL);
-	new->n = n;
-	new->next = NULL;
+
+	new_node->n = n;
+	new_node->next = NULL;
+
 	if (*head == NULL)
 	{
-		*head = new;
-		return (*head);
+		*head = new_node;
+		return (new_node);
 	}
-	current = *head;
-	while (current->next != NULL)
-		current = current->next;
-	current->next = new;
-	return (*head);
+	next_ptr = *head;
+
+	while (next_ptr->next != NULL)
+		next_ptr = next_ptr->next;
+	next_ptr->next = new_node;
+	return (new_node);
 }
