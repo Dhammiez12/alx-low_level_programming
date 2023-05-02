@@ -12,18 +12,22 @@
 
 listint_t *reverse_listint(listint_t **head)
 {
-	listint_t *prev = NULL;
-	listint_t *next = NULL;
+	listint_t *previous_ptr;
+	listint_t *last_ptr;
 
-	while (*head)
+	if (*head == NULL || (*head)->next == NULL)
+		return (*head);
+	previous_ptr = *head;
+	last_ptr = (*head)->next;
+
+	while (last != NULL)
 	{
-		next = (*head)->next;
-		(*head)->next = prev;
-		prev = *head;
-		*head = next;
+		(*head)->next = last_ptr->next;
+		last_ptr->next = previous_ptr;
+		previous_ptr = last_ptr;
+		last_ptr = (*head)->next;
 	}
-
-	*head = prev;
+	*head = previous_ptr;
 
 	return (*head);
 }

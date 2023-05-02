@@ -6,32 +6,38 @@
 /**
 * free_listint_safe - A function that frees a linked list safely
 * @h: first node
-* Return: size
+* Return: length
 */
 
 size_t free_listint_safe(listint_t **h)
 {
-	listint_t *s_ptr, *f_ptr, *free_ptr;
-	size_t size;
+	size_t len = 0;
+	int diff;
+	listint_t *temp;
 
-	size = 0;
-
-	if (!h || *h == NULL)
+	if (!h || !*h)
 		return (0);
-	f_ptr = (*h)->next;
-	s_ptr = *h;
 
-	while (f_ptr && f_ptr < s_ptr)
+	while (*h)
 	{
-		free_ptr = s_ptr;
-		f_ptr = f_ptr->next;
-		s_ptr = s_ptr->next;
-		size += 1;
-
-		free(free_ptr);
+		diff = *h - (*h)->next;
+		if (diff > 0)
+		{
+			temp = (*h)->next;
+			free(*h);
+			*h = temp;
+			len++;
+		}
+		else
+		{
+			free(*h);
+			*h = NULL;
+			len++;
+			break;
+		}
 	}
-	size += 1;
-	free(s_ptr);
+
 	*h = NULL;
-	return (size);
+
+	return (len);
 }
