@@ -1,95 +1,79 @@
 #include "main.h"
 #include <stdio.h>
-#define BUF_SIZE 1024
+
 
 /**
-* main - main function
-* @argc: argment count
-* @argv: argument vector
-* Return: 0
-**/
+ * error_file - A function that checks if file can be open
+ * @file_from: file from
+ * @file_to: file to
+ * @argv: argument vector
+ */
 
-int main(int argc, char **argv)
+void error_file(int file_from, int file_to, char *argv[])
 {
-	int f0, f1, res0, res1;
-	char *buffer;
+	if (file_from == -1)
+
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
+	}
+
+	if (file_to == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+		exit(99);
+	}
+
+}
+
+/**
+ * main - main function
+ * @argc: argument count
+ * @argv: argument vector
+ * Return: 0
+ */
+
+int main(int argc, char *argv[])
+{
+	int file_from, file_to, err_close;
+	ssize_t nrd, nwr;
+	char buffer[1024];
 
 	if (argc != 3)
 	{
-		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
+		dprintf(STDERR_FILENO, "%s\n", "Usage: cp file_from file_to");
 		exit(97);
 	}
-	buffer = malloc(sizeof(char) * BUF_SIZE);
-	if (!buffer)
-		return (0);
-
-	f1 = open(argv[1], O_RDONLY);
-	error_98(f1, buffer, argv[1]);
-	f0 = open(argv[2], O_WRONLY | O_TRUNC | O_CREAT, 0664);
-	error_99(f0, buffer, argv[2]);
-	do {
-		res0 = read(f1, buffer, BUF_SIZE);
-		if (res0 == 0)
-			break;
-		error_98(res0, buffer, argv[1]);
-		res1 = write(f0, buffer, res0);
-		error_99(res1, buffer, argv[2]);
-	} while (res1 >= BUF_SIZE);
-	res0 = close(f0);
-	error_100(res0, buffer);
-	res0 = close(f1);
-	error_100(res0, buffer);
-	free(buffer);
-	return (0);
-}
-
-/**
-* error_98 - A function that checks error 98
-* @f0: file to check
-* @buffer: buffer
-* @argv: argument vector
-**/
-
-void error_98(int f0, char *buffer, char *argv)
-{
-
-	if (f0 < 0)
+	
+	file_from = open(argv[1], O_RDONLY);
+	file_to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC | O_APPEND, 0664);
+	error_file(file_from, file_to, argv);
+	nrd = 1024;
+	while (nrd == 1024)
 	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv);
-		free(buffer);
-		exit(98);
+		
+	nrd = read(file_from, buffer, 1024);
+	if (nrd == -1)
+		error_file(-1, 0, argv);
+	nwr = write(file_to, buffer, nrd);
+
+	if (nwr == -1)
+		error_file(0, -1, argv);
 	}
-}
-
-/**
-* error_99 - A function that checks error 99
-* @f0: file
-* @buffer: buffer
-* @argv: argument vector
-*/
-
-void error_99(int f0, char *buffer, char *argv)
-{
-	if (f0 < 0)
+	
+	err_close = close(file_from);
+	if (err_close == -1)
 	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv);
-		free(buffer);
-		exit(99);
-	}
-}
-
-/**
-* error_100 - A function that checks error 100
-* @f0: file to check
-* @buffer: buffer
-*/
-
-void error_100(int f0, char *buffer)
-{
-	if (f0 < 0)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %i\n", f0);
-		free(buffer);
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", file_from);
 		exit(100);
 	}
+	
+	err_close = close(file_to);
+	if (err_close == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", file_from);
+		exit(100);
+	}
+
+return (0);
 }
